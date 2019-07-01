@@ -28,7 +28,9 @@ object Utils {
     }
 
     fun toInitials(firstName: String?, lastName: String?): String? {
-        return "PA"
+        val Let1: String? = firstName?.get(0).toString()
+        val Let2: String? = lastName?.get(0).toString()
+        return Let1 + Let2
 
     }
 }
