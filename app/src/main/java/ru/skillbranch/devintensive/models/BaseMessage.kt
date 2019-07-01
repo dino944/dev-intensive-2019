@@ -12,7 +12,7 @@ abstract class BaseMessage (
 ){
 
     abstract fun formatMessage() : String
-
+//            return ("$lastId", from, $isIncoming, $type)
     companion object AbstractFactory{
         var lastId = -1
         fun makeMessage(from: User?, chat:Chat, date:Date = Date(), type:String="text", payload: Any?):BaseMessage{
