@@ -22,16 +22,18 @@ object Utils {
 //        return firstName to lastName
     }
 
-    fun transliteration(payload: String, divider:String = " "): String {
+    fun transliteration(payload: String?, divider:String = " "): String {
 //val TT:String = ""
-//       val Tt : String =
-        val Tt : String = payload.replace(Regex("[абвгдеёжзийклмнопрстуфхцшщъыьэюя АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦШЩЪЫЬЭЮЯ]")) {
+      val tT : String
+        if (payload == null) return "нет" else
+        tT  = payload.replace(Regex("[абвгдеёжзийклмнопрстуфхцшщъыьэюя АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦШЩЪЫЬЭЮЯ]")) {
                     when(it.value) {
+                        " " -> "_"
                         "а"-> "a"
                         "б"-> "b"
                         "в"-> "v"
                         "г"-> "g"
-                        " "-> " "
+                        " "-> "_"
                         "д"-> "d"
                         "е"-> "e"
                         "ё"-> "e"
@@ -107,7 +109,7 @@ object Utils {
                 }
 
 
-        return Tt
+        return tT
 
     }
 
