@@ -41,45 +41,9 @@ data class User (
         fun makeUser(fullName: String?): User {
             lastId++
 
-
-
-
             val (firstName, lastName) = Utils.parseFullName(fullName)
-//            return User(id= "$lastId", firstName = firstName, lastName = lastName)
+            return User(id= "$lastId", firstName = firstName, lastName = lastName)
 
-            when {
-                (firstName == "") && (lastName == "") -> return User(id= "$lastId", firstName = "null", lastName = "null")
-                (firstName !== "") && (lastName == "") -> return User(id = "$lastId", firstName = firstName, lastName = "null")
-                (firstName == "") && (lastName != "") -> return User(id= "$lastId", firstName = "null", lastName = lastName)
-//            else -> Pair(firstName, lastName)}
-//           else ->
-                else -> return User(id = "$lastId", firstName = firstName, lastName = lastName)
-            }
-
-            /**   private fun getIntro()="""
-            df df df dfdfdfdf !!!!
-            df df df dfffffff ...
-
-            df df df dfdfdfdf !!!!
-            df df df dfffffff ...
-            ${"\n"}
-
-            $firstName $lastName
-            """.trimIndent()
-
-            fun printMe() : Unit{
-            println("""
-            id: $id
-            firstName: $firstName
-            lastName: $lastName
-            avatar: $avatar
-            rating: $rating
-            respect: $respect
-            lastVisit: $lastVisit
-            isOnline: $isOnline
-            """.trimIndent())
-            }
-             **/
         }
     }
 }

@@ -14,23 +14,13 @@ fun User.toUserView() : UserView{
     val status = if (lastVisit == null) "Еще ни разу не был"
     else if (isOnline) "online" else "Последний раз был ${lastVisit.humanizeDiff()}"
 
-    when (nickName) {
-
-            "null_null" -> return UserView(
-                    id,
-                    fullName = "$firstName $lastName",
-                    nickName = "MMMM_KKKKK",
-                    initials = "MK",
-                    avatar = avatar,
-                    status = status)
-            else -> return UserView(
+    return UserView(
                     id,
                     fullName = "$firstName $lastName",
                     nickName = nickName,
                     initials = initials,
                     avatar = avatar,
                     status = status)
-    }
 
 }
 /**
