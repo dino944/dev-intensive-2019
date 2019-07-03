@@ -95,7 +95,7 @@ object Utils {
                 }
         return tT
     }
-
+/*
     fun toInitials(firstName: String?, lastName: String?): String? {
         var iT: String
         if ((firstName?.replace(" ", "") == "" && lastName?.replace(" ", "") == "") ||
@@ -108,4 +108,12 @@ object Utils {
 
 
     }
+    */
+fun toInitials(firstName: String?, lastName: String?): String {
+    val Let1: String? = firstName?.get(0).toString()
+    val Let2: String? = lastName?.get(0).toString()
+    return transliteration(Let1 + Let2)
+
+}
+
 }
