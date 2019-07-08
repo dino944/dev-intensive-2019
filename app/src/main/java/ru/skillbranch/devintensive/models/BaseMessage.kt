@@ -11,9 +11,12 @@ abstract class BaseMessage (
         val date: Date = Date()
 ){
 
-    abstract fun formatMessage() : String
+    abstract fun formatMessage(): String
 //            return ("$lastId", from, $isIncoming, $type)
-    companion object AbstractFactory{
+
+
+
+    companion object abstractFactory{
         var lastId = -1
         fun makeMessage(from: User?, chat:Chat, date:Date = Date(), type:String="text", payload: Any?, isIncoming: Boolean = false): BaseMessage{
             lastId++
