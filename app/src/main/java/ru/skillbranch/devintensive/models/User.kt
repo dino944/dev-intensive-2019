@@ -32,7 +32,7 @@ data class User (
 
     init {
 //        introBit = getIntro()
-        println("It's Alive!\n" +
+        println("It's Alive!!!\n" +
                 "${if (lastName == "Doe") "His name id $firstName $lastName" else "And his name is $firstName $lastName"}\n")
         //       "${getIntro()}")
     }
