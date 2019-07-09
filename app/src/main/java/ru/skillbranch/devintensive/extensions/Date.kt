@@ -1,117 +1,125 @@
 package ru.skillbranch.devintensive.extensions
 
-import ru.skillbranch.devintensive.models.User
+import java.lang.IllegalArgumentException
+import java.lang.Math.abs
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
 
-
-/**
- * Created by Dino944 on 30.06.2019
- */
 
 const val SECOND = 1000L
 const val MINUTE = 60 * SECOND
-const val HOUR = 60 * MINUTE
+const val  HOUR = 60 * MINUTE
 const val DAY = 24 * HOUR
 
-fun Date.format(pattern: String = "HH:mm:ss dd.MM.yy"): String {
-    val dateFormat = SimpleDateFormat(pattern, Locale("ru"))
+fun Date.format(pattern:String="HH:mm:ss dd.MM.yy"): String {
+    var dateFormat = SimpleDateFormat(pattern, Locale("ru"))
     return dateFormat.format(this)
 }
-
-
-/**
- * Extension function to format data into human-friendly type
- */
-fun Date.humanizeDiff(date: Date = Date()): String {
-    val diff = (date.time - this.time)
-
-    return when (Math.abs(diff / DAY).toInt()) {
-
-        0 -> {
-            when (Math.abs(diff / HOUR).toInt()) {
-                0 -> {
-                    when (Math.abs(diff / MINUTE).toInt()) {
-                        0 -> {
-                            when (Math.abs(diff / SECOND).toInt()) {
-                               in 0..15 -> if ((diff / SECOND).toInt() >= 0) "только что" else "скоро"
-      //                          in 0..15 -> if ((diff / SECOND).toInt() >= 0) "несколько секунд назад" else "только что"
-                                else -> if ((diff / SECOND).toInt() > 0) "менее минуты назад" else "более чем через минуту"
-                            }
-                        }
-                        1 -> "минуту назад"
-                        in 2..4, in 22..24,
-                        in 32..34, in 42..44,
-                        in 52..54 -> if ((diff / MINUTE).toInt() > 0) "${diff / MINUTE} минуты назад" else "через ${-diff / MINUTE} минуты"
-                        21, 31, 41, 51 -> if ((diff / MINUTE).toInt() > 0) "${diff / MINUTE} минуту назад" else "через ${-diff / MINUTE} минуту"
-                        else -> if ((diff / MINUTE).toInt() > 0) "${diff / MINUTE} минут назад" else "через ${-diff / MINUTE} минут"
-                    }
-                }
-                1, 21 -> if ((diff / HOUR).toInt() > 0) "${diff / HOUR} час назад" else "через ${diff / HOUR} час"
-                in 2..4, in 22..24 -> if ((diff / HOUR).toInt() > 0) "${diff / HOUR} часа назад" else "через ${diff / HOUR} часа"
-                else -> if ((diff / HOUR).toInt() > 0) "${diff / HOUR} часов назад" else "через ${diff / HOUR} часов"
-            }
-        }
-
-        1 -> if ((diff / DAY).toInt() > 0) "вчера" else "завтра"
-        in 2..4 -> if ((diff / DAY).toInt() > 0) "${diff / DAY} дня назад" else "через ${-diff / DAY} дня"
-        in 5..7 -> if ((diff / DAY).toInt() > 0) "${diff / DAY} дней назад" else "через ${-diff / DAY} дней"
-        in 8..14 -> if((diff / DAY).toInt() > 0) "более недели назад" else "более чем через неделю"
-        in 15..31 -> if((diff / DAY).toInt() > 0) "более двух недель назад" else "более чем через две недели"
-        in 32..61 -> if((diff / DAY).toInt() > 0) "более месяца назад" else "более чем через месяц"
-        in 62..182 -> if((diff / DAY).toInt() > 0) "более ${diff / DAY} месяцев назад" else "более чем через ${-diff / DAY} месяца"
-        in 183..365 -> if((diff / DAY).toInt() > 0) "более полугода назад" else "более чем через полгода"
-        in 365..Int.MAX_VALUE -> if((diff / DAY).toInt() > 0) "более года назад" else "более чем через год"
-
-        else -> "никогда"
-    }
-}
-
-
-fun Date.add(value: Int, units: TimeUnits = TimeUnits.SECOND): Date {
+fun Date.add(value:Int, timeUnit: TimeUnits): Date{
     var time = this.time
-    time += when (units) {
-        TimeUnits.SECOND -> value * SECOND
-        TimeUnits.MINUTE -> value * MINUTE
-        TimeUnits.HOUR -> value * HOUR
-        TimeUnits.DAY -> value * DAY
+
+    time += when(timeUnit){
+        TimeUnits.SECOND -> SECOND * value
+        TimeUnits.MINUTE ->  MINUTE * value
+        TimeUnits.HOUR ->  HOUR * value
+        TimeUnits.DAY ->  DAY * value
     }
     this.time = time
     return this
 }
-
-
-fun TimeUnits.plural(value: Int): String {
-    return when (this) {
-        TimeUnits.SECOND -> "$value секунды"
-        TimeUnits.MINUTE -> "$value минуты"
-        TimeUnits.HOUR -> "$value часы"
-        TimeUnits.DAY -> "$value дни"
+fun Date.humanizeDiff(date: Date = Date()): String{
+    fun getMinute(mill: Long) : String{
+        val min =  abs(mill/1000L/60)
+        if(min in 10..20){
+            return "$min минут"
+        }
+        val millStrLast = min.toString().last()
+        return when(millStrLast){
+            '1' -> "$min минуту"
+            '2','3','4' -> "$min минуты"
+            else-> "$min минут"
+        }
+    }
+    fun getHour(mill: Long) : String{
+        val hour =  abs(mill/1000L/60/60)
+        if(hour in 10..20){
+            return "$hour часов"
+        }
+        val millStrLast = hour.toString().last()
+        return when(millStrLast){
+            '1' -> "$hour час"
+            '2','3','4' -> "$hour часа"
+            else-> "$hour часов"
+        }
+    }
+    fun getDay(mill: Long) : String{
+        val day =  abs(mill/1000L/60/60/24)
+        if(day in 10..320){
+            return "$day дней"
+        }
+        val millStrLast = day.toString().last()
+        return when(millStrLast){
+            '1' -> "$day день"
+            '2','3','4' -> "$day дня"
+            else-> "$day дней"
+        }
+    }
+    val diff = this.time - date.time;
+    return when(diff){
+        in -1 * SECOND..1 * SECOND-> "только что"
+        in -45 * SECOND..-1* SECOND-> "несколько секунд назад"
+        in 1* SECOND..45 * SECOND-> "через несколько секунд"
+        in -75 * SECOND..-45 * SECOND -> "минуту назад"
+        in 45 * SECOND..75 * SECOND -> "через минуту"
+        in -45 * MINUTE ..-75 * SECOND-> "${getMinute(diff)} назад"
+        in 75 * SECOND..45 * MINUTE -> "через ${getMinute(diff)}"
+        in -75 * MINUTE ..-45 * MINUTE-> "час назад"
+        in 45 * MINUTE..75 * MINUTE -> "через час"
+        in -22 * HOUR  ..-75 * MINUTE-> "${getHour(diff)} назад"
+        in 75 * MINUTE..22 * HOUR -> "через ${getHour(diff)}"
+        in -26 * HOUR  ..-22 * HOUR-> "день назад"
+        in 22 * HOUR..26* HOUR -> "через день"
+        in -360 * DAY  ..-26 * HOUR-> "${getDay(diff)} назад"
+        in 26 * HOUR..360* DAY -> "через ${getDay(diff)}"
+        in Long.MIN_VALUE..-360 * DAY -> "более года назад"
+        in 360 * DAY.. Long.MAX_VALUE-> "более чем через год"
+        else -> throw IllegalArgumentException("$diff")
     }
 }
 
 
-fun String.truncate(count: Int = 16): String {
-    if (count > this.trim().length)
-        return this.trim()
-    return this.substring(0, count).trim() + "..."
-}
+enum class TimeUnits{
+    SECOND{
+        override fun plural(value: Int) :String{
 
+            return makeString(value,Triple("секунд", "секунду", "секунды"))
 
-fun String.stripHtml(): String {
+        }
+    }, MINUTE {
+        override fun plural(value: Int) :String{
+            return makeString(value,Triple("минут", "минуту", "минуты" ))
+        }
+    }, HOUR {
+        override fun plural(value: Int):String {
+            return makeString(value,Triple("часов", "час", "часа"))
 
-    var str = this
-
-    while (str.indexOf("<") != -1 && str.indexOf(">") != -1) {
-        val toBeReplaced = str.substring(str.indexOf("<"), str.indexOf(">") + 1)
-        str = str.replace(toBeReplaced, "")
+        }
+    }, DAY {
+        override fun plural(value: Int) :String{
+            return makeString(value,Triple("дней", "день", "дня"))
+        }
+    };
+    abstract fun plural(value: Int): String
+    companion object Utils{
+        private fun makeString(value: Int, triple: Triple<String, String, String>) : String {
+            if (value in 10..20) {
+                return "$value ${triple.first}"
+            }
+            return when (value.toString().last()) {
+                '1' -> "$value ${triple.second}"
+                '2', '3', '4' -> "$value ${triple.third}"
+                else -> "$value ${triple.first}"
+            }
+        }
     }
-
-    str = str.replace("\\s+".toRegex()," ")
-
-    return str.trim()
 }
-
-
-enum class TimeUnits { SECOND, MINUTE, HOUR, DAY }
