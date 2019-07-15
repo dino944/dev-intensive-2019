@@ -10,11 +10,18 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.os.Handler
+import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.skillbranch.devintensive.models.Bender
 
+
 class MainActivity : AppCompatActivity(), View.OnClickListener {
+    companion object {
+        private val STATUS_TAG = "STATUS"
+        private val QUESTION_TAG = "QUESTION"
+    }
     lateinit var benderImage: ImageView
     lateinit var textTxt: TextView
     lateinit var messageEt: EditText
@@ -43,7 +50,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         textTxt = tv_text
         messageEt = et_message
         sendBtn = iv_send
+///////////////////////////////////
+        messageEt.imeOptions = EditorInfo.IME_ACTION_DONE
+/*
+        messageEt.setOnEditorActionListener { v, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                send()
+                hideKeyboard()
+                true
+            } else false
+        }
+*/
 
+        ////////////////////////////////////////////
         val status = savedInstanceState?.getString("STATUS") ?: Bender.Status.NORMAL.name
         val question = savedInstanceState?.getString("QUESTION") ?: Bender.Question.NAME.name
         benderObj = Bender(Bender.Status.valueOf(status), Bender.Question.valueOf(question))

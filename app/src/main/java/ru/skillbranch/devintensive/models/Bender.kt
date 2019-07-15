@@ -2,6 +2,7 @@ package ru.skillbranch.devintensive.models
 
 import android.os.Build.SERIAL
 import android.provider.Contacts.PresenceColumns.IDLE
+import androidx.core.text.isDigitsOnly
 
 /**
  * Created by Dino944 on 14.07.2019.
@@ -20,7 +21,32 @@ class Bender(var status:Status = Status.NORMAL, var question: Question = Questio
     }
 
     fun listenAnswer(answer:String) : Pair<String, Triple<Int, Int, Int>>{
+        val valid = validate(answer, question)
+        if (valid.isNotEmpty()) {
+            return "$valid\n${question.question}" to status.color
+        }
 
+        if (question.answer.contains(answer.toLowerCase())) {
+            question = question.nextQuestion()
+
+            return "Отлично - ты справился\n${question.question}" to status.color
+        } else {
+
+            if (status == Status.CRITICAL) {
+                status = Status.NORMAL
+                question = Question.NAME
+
+                return "Это неправильный ответ. Давай все по новой\n${question.question}" to status.color
+            }
+
+            status = status.nextStatus()
+            return "Это неправильный ответ\n${question.question}"  to status.color
+        }
+
+    }
+
+
+/*
         return if(question.answer.contains(answer)){
 
             question = question.nextQuestion()
@@ -31,9 +57,22 @@ class Bender(var status:Status = Status.NORMAL, var question: Question = Questio
             status = status.nextStatus()
             "Это не правильный ответ!\n${question.question}" to status.color
         }
+ */
+ //   }
 
+
+    /////////////////////////////
+    fun validate(answer: String, question: Question): String {
+        return when (question) {
+            Question.NAME ->  if (answer.isNotEmpty() && Character.isUpperCase(answer[0])) "" else "Имя должно начинаться с заглавной буквы"
+            Question.PROFESSION -> if (answer.isNotEmpty() && !Character.isUpperCase(answer[0])) "" else "Профессия должна начинаться со строчной буквы"
+            Question.MATERIAL -> if (!answer.matches(Regex(".*\\d.*"))) "" else "Материал не должен содержать цифр"
+            Question.BDAY -> if (answer.isDigitsOnly()) "" else "Год моего рождения должен содержать только цифры"
+            Question.SERIAL -> if (answer.isDigitsOnly() && (answer.length == 7)) "" else "Серийный номер содержит только цифры, и их 7"
+            Question.IDLE -> ""
+        }
     }
-
+//////////////////////////////
 
     enum class Status(val color: Triple<Int, Int, Int>){
         NORMAL(Triple(255,255,255)),
